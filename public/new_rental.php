@@ -104,6 +104,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <br>
 <a href="rentals.php">Back to Rentals List</a>
-<a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
