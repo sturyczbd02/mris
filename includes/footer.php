@@ -1,7 +1,7 @@
-</div> <!-- content -->
+</div> <!-- end main-container -->
 
-<footer>
-    <p>MRIS &copy; 2026</p>
+<footer class="footer">
+    <p>Movie Rental Information System &copy; <?= date("Y") ?></p>
 </footer>
 
 </body>

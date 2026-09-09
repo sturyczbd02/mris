@@ -6,17 +6,25 @@ if (session_status() === PHP_SESSION_NONE) {
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>MRIS</title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
-<div class="navbar">
-    <a href="/dashboard.php">Dashboard</a>
-    <a href="/customers.php">Customers</a>
-    <a href="/movies.php">Movies</a>
-    <a href="/rentals.php">Rentals</a>
-    <a href="/logout.php">Logout</a>
-</div>
+<!-- Top Navigation Bar -->
+<nav class="top-nav">
+    <div class="nav-left">
+        <a class="nav-brand" href="/dashboard.php">MRIS</a>
+    </div>
 
-<div class="content">
+    <div class="nav-right">
+        <?php if (isset($_SESSION['username'])): ?>
+            <span class="nav-user">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></span>
+            <a href="/logout.php" class="nav-link">Logout</a>
+        <?php endif; ?>
+    </div>
+</nav>
+
+<!-- Main Page Container -->
+<div class="main-container">
