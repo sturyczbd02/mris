@@ -3,44 +3,51 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin', 'manager', 'employee']);
-require_once __DIR__ . '/../includes/header.php';
 
+// Ensure rental ID exists
 if (!isset($_GET['id'])) {
     die("Rental ID missing.");
 }
 
-$id = $_GET['id'];
+$rental_id = (int) $_GET['id'];
 
-// Fetch rental
-$stmt = $pdo->prepare("SELECT * FROM rentals WHERE id = :id");
-$stmt->execute([':id' => $id]);
+// Fetch rental record
+$stmt = $pdo->prepare("
+    SELECT r.*, m.stock_count 
+    FROM rentals r
+    JOIN movies m ON r.movie_id = m.id
+    WHERE r.id = :id
+");
+$stmt->execute([':id' => $rental_id]);
 $rental = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$rental) {
     die("Rental not found.");
 }
 
+// Prevent double returns
 if ($rental['status'] === 'returned') {
     header("Location: rentals.php");
     exit;
 }
 
-// Mark returned
-$pdo->prepare("
-    UPDATE rentals 
+// Mark rental as returned
+$stmt = $pdo->prepare("
+    UPDATE rentals
     SET return_date = NOW(), status = 'returned'
     WHERE id = :id
-")->execute([':id' => $id]);
+");
+$stmt->execute([':id' => $rental_id]);
 
-// Increase stock
-$pdo->prepare("
-    UPDATE movies 
+// Increase movie stock
+$stmt = $pdo->prepare("
+    UPDATE movies
     SET stock_count = stock_count + 1
-    WHERE id = :movie
-")->execute([':movie' => $rental['movie_id']]);
+    WHERE id = :movie_id
+");
+$stmt->execute([':movie_id' => $rental['movie_id']]);
 
+// Redirect back to rentals list
 header("Location: rentals.php");
 exit;
-
-require_once __DIR__ . '/../includes/footer.php';
 ?>
