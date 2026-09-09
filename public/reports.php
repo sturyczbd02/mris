@@ -8,6 +8,8 @@ require_once __DIR__ . '/../includes/header.php';
 <h1>Reports</h1>
 <a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
+<br><br>
+
 <div class="dashboard-grid">
 
     <div class="card">
