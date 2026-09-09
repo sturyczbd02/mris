@@ -12,7 +12,7 @@ $stmt = $pdo->query("
     FROM rentals r
     JOIN customers c ON r.customer_id = c.id
     JOIN movies m ON r.movie_id = m.id
-    WHERE r.status = 'out'
+    WHERE COALESCE(r.status, 'out') = 'out'
     ORDER BY r.rental_date DESC
 ");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
