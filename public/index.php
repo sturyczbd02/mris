@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="landing-container">
 
     <div class="landing-content">
-        <h1 class="landing-title">Fox Valley Movie Rentals</h1>
+        <h1 class="landing-title">Brew City Rentals</h1>
         <p class="landing-subtitle">Your local source for movie nights.</p>
 
         <p class="landing-description">
