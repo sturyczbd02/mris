@@ -9,7 +9,7 @@ $message = "";
 $errors = [];
 
 $customers = $pdo->query("SELECT id, first_name, last_name FROM customers ORDER BY last_name")->fetchAll(PDO::FETCH_ASSOC);
-$movies = $pdo->query("SELECT id, title, stock FROM movies ORDER BY title")->fetchAll(PDO::FETCH_ASSOC);
+$movies = $pdo->query("SELECT id, title, stock_count FROM movies ORDER BY title")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customer_id = $_POST['customer_id'] ?? "";
