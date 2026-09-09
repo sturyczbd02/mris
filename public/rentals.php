@@ -53,7 +53,7 @@ $rentals = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <td><?= $r['status'] ?></td>
         <td>
             <?php if ($r['status'] === 'out'): ?>
-                <a href="return_rental.php?id=<?= $r['id'] ?>">Return</a>
+                <a href="/return_rental.php?id=<?= $r['id'] ?>">Return</a>
             <?php else: ?>
                 Returned
             <?php endif; ?>
