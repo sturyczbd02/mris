@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
@@ -11,11 +8,19 @@ require_once __DIR__ . '/../includes/header.php';
 $message = "";
 $errors = [];
 
-// Fetch customers
-$customers = $pdo->query("SELECT id, name FROM customers ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+// Fetch customers (fixed name fields)
+$customers = $pdo->query("
+    SELECT id, first_name, last_name 
+    FROM customers 
+    ORDER BY last_name
+")->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch movies (fixed stock_count reference)
-$movies = $pdo->query("SELECT id, title, stock_count FROM movies ORDER BY title")->fetchAll(PDO::FETCH_ASSOC);
+$movies = $pdo->query("
+    SELECT id, title, stock_count 
+    FROM movies 
+    ORDER BY title
+")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customer_id = $_POST['customer_id'] ?? '';
@@ -78,7 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <select name="customer_id" required>
         <option value="">Select Customer</option>
         <?php foreach ($customers as $c): ?>
-            <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+            <option value="<?= $c['id'] ?>">
+                <?= htmlspecialchars($c['first_name'] . ' ' . $c['last_name']) ?>
+            </option>
         <?php endforeach; ?>
     </select><br><br>
 
