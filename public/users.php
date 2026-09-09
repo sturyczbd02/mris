@@ -10,6 +10,7 @@ $users = $pdo->query("SELECT id, username, role FROM users ORDER BY username ASC
 ?>
 
 <h1>Manage Users</h1>
+<a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
 <a href="add_user.php" class="card-btn">Add New User</a>
 <br><br>

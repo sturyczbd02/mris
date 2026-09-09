@@ -15,6 +15,7 @@ $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h1>Customer List</h1>
+    <a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
     <a href="add_customer.php">Add New Customer</a>
     <br><br>
