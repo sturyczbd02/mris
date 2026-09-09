@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>MRIS</title>
+    <title>Fox Valley Movie Rentals</title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <!-- Top Navigation Bar -->
 <nav class="top-nav">
     <div class="nav-left">
-        <a class="nav-brand" href="/dashboard.php">MRIS</a>
+        <a class="nav-brand" href="/dashboard.php">Fox Valley Movie Rentals</a>
     </div>
 
     <div class="nav-right">

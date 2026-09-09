@@ -1,19 +1,22 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>MRIS</title>
-</head>
-<body>
-    <h1>Welcome to MRIS</h1>
-    <p>Your database connection is live.</p>
-</body>
-</html>
+
+<div class="landing-container">
+
+    <div class="landing-content">
+        <h1 class="landing-title">Fox Valley Movie Rentals</h1>
+        <p class="landing-subtitle">Your local source for movie nights.</p>
+
+        <p class="landing-description">
+            Manage your movie catalog, customer accounts, rentals, and business reports — all in one modern, secure system.
+        </p>
+
+        <a href="/login.php" class="landing-button">Login to Continue</a>
+    </div>
+
+</div>
 
 <?php
-require_once __DIR__ . '/../includes/footer.php';
+require_once __DIR__ . '/includes/footer.php';
 ?>
