@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/permissions.php';
+require_role(['admin', 'manager']);
+require_once __DIR__ . '/../includes/header.php';
 
 $stmt = $pdo->query("SELECT * FROM movies ORDER BY title ASC");
 $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,3 +49,5 @@ $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

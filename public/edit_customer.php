@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/permissions.php';
+require_role(['admin']);
+require_once __DIR__ . '/../includes/header.php';
 
 // Make sure an ID was provided
 if (!isset($_GET['id'])) {
@@ -77,3 +81,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

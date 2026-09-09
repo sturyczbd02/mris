@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/permissions.php';
+require_role(['admin', 'manager']);
+require_once __DIR__ . '/../includes/header.php';
 
 $stmt = $pdo->query("SELECT * FROM customers ORDER BY last_name ASC");
 $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -40,3 +44,5 @@ $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

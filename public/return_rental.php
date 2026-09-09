@@ -1,6 +1,9 @@
 <?php
-require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/permissions.php';
+require_role(['admin', 'manager', 'employee']);
+require_once __DIR__ . '/../includes/header.php';
 
 if (!isset($_GET['id'])) {
     die("Rental ID missing.");
@@ -38,4 +41,6 @@ $pdo->prepare("
 
 header("Location: rentals.php");
 exit;
+
+require_once __DIR__ . '/../includes/footer.php';
 ?>
