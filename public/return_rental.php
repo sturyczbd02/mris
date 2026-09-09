@@ -4,14 +4,15 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin', 'manager', 'employee']);
 
-// Ensure rental ID exists
+// Make sure an ID was passed
 if (!isset($_GET['id'])) {
-    die("Rental ID missing.");
+    header("Location: rentals.php");
+    exit;
 }
 
 $rental_id = (int) $_GET['id'];
 
-// Fetch rental record
+// Fetch rental + movie info
 $stmt = $pdo->prepare("
     SELECT r.*, m.stock_count 
     FROM rentals r
@@ -31,7 +32,7 @@ if ($rental['status'] === 'returned') {
     exit;
 }
 
-// Mark rental as returned
+// Update rental record
 $stmt = $pdo->prepare("
     UPDATE rentals
     SET return_date = NOW(), status = 'returned'
