@@ -1,13 +1,11 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin', 'manager', 'employee']);
 require_once __DIR__ . '/../includes/header.php';
 
+// Fetch all rentals with customer + movie info
 $stmt = $pdo->query("
     SELECT r.*, 
            c.first_name, c.last_name,
@@ -49,14 +47,19 @@ $rentals = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php foreach ($rentals as $r): ?>
     <tr>
         <td><?= $r['id'] ?></td>
-        <td><?= $r['first_name'] . " " . $r['last_name'] ?></td>
-        <td><?= $r['title'] ?></td>
+        <td><?= htmlspecialchars($r['first_name'] . " " . $r['last_name']) ?></td>
+        <td><?= htmlspecialchars($r['title']) ?></td>
         <td><?= $r['rental_date'] ?></td>
+
+        <!-- Show return date or dash -->
         <td><?= $r['return_date'] ?: '-' ?></td>
-        <td><?= $r['status'] ?></td>
+
+        <!-- Show status (NULL-safe) -->
+        <td><?= $r['status'] ?: 'out' ?></td>
+
         <td>
-            <?php if ($r['status'] === 'out'): ?>
-                <a href="/return_rental.php?id=<?= $r['id'] ?>">Return</a>
+            <?php if (($r['status'] ?? 'out') === 'out'): ?>
+                <a href="return_rental.php?id=<?= $r['id'] ?>">Return</a>
             <?php else: ?>
                 Returned
             <?php endif; ?>
