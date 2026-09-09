@@ -11,10 +11,15 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $genre = trim($_POST['genre']);
+    $year = trim($_POST['year']);
+    $rating = trim($_POST['rating']);
     $stock = trim($_POST['stock']);
 
+    // Validation
     if (empty($title)) $errors[] = "Movie title is required.";
     if (empty($genre)) $errors[] = "Genre is required.";
+    if (empty($year)) $errors[] = "Year is required.";
+    if (empty($rating)) $errors[] = "Rating is required.";
     if ($stock === "") {
         $errors[] = "Stock is required.";
     } elseif (!ctype_digit($stock) || $stock < 0) {
@@ -23,14 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $stmt = $pdo->prepare("
-            INSERT INTO movies (title, genre, stock)
-            VALUES (:title, :genre, :stock)
+            INSERT INTO movies (title, genre, year, rating, stock_count)
+            VALUES (:title, :genre, :year, :rating, :stock_count)
         ");
         $stmt->execute([
             ':title' => $title,
             ':genre' => $genre,
-            ':stock' => $stock
+            ':year' => $year,
+            ':rating' => $rating,
+            ':stock_count' => $stock
         ]);
+
         $message = "Movie added successfully!";
     }
 }
@@ -59,6 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label>Genre:</label><br>
     <input type="text" name="genre" required><br><br>
 
+    <label>Year:</label><br>
+    <input type="number" name="year" min="1900" max="2099" required><br><br>
+
+    <label>Rating:</label><br>
+    <input type="text" name="rating" placeholder="e.g. PG-13" required><br><br>
+
     <label>Stock:</label><br>
     <input type="number" name="stock" min="0" required><br><br>
 
@@ -67,5 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <br>
 <a href="movies.php">Back to Movie List</a>
+<a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
