@@ -27,6 +27,8 @@ $rentals = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <h1>Rental Transactions</h1>
 <a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
 
+<br><br>
+
 <a href="new_rental.php">Create New Rental</a>
 <br><br>
 
