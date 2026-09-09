@@ -13,17 +13,21 @@ require_once __DIR__ . '/../includes/header.php';
 
         <div class="dashboard-grid">
 
+            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager'): ?>
             <div class="card">
                 <h2>Customers</h2>
                 <p>Total: <?= $pdo->query("SELECT COUNT(*) FROM customers")->fetchColumn() ?></p>
                 <a href="/customers.php" class="card-btn">Manage Customers</a>
             </div>
+            <?php endif; ?>
 
+            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager'): ?>
             <div class="card">
                 <h2>Movies</h2>
                 <p>Total: <?= $pdo->query("SELECT COUNT(*) FROM movies")->fetchColumn() ?></p>
                 <a href="/movies.php" class="card-btn">Manage Movies</a>
             </div>
+            <?php endif; ?>
 
             <div class="card">
                 <h2>Rentals</h2>
@@ -32,13 +36,15 @@ require_once __DIR__ . '/../includes/header.php';
                 <a href="/rentals.php" class="card-btn">View Rentals</a>
                 <a href="/new_rental.php" class="card-btn">New Rental</a>
             </div>
-
+            
+            <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager'): ?>
             <div class="card">
                 <h2>Reports</h2>
                 <p>View rental history and analytics.</p>
                 <a href="/reports.php" class="card-btn">Open Reports</a>
             </div>
-
+            <?php endif; ?>
+            
             <?php if ($_SESSION['role'] === 'admin'): ?>
             <div class="card">
                 <h2>User Accounts</h2>
