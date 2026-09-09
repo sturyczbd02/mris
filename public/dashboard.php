@@ -33,7 +33,6 @@ require_once __DIR__ . '/../includes/header.php';
                 <a href="/new_rental.php" class="card-btn">New Rental</a>
             </div>
 
-            <?php if ($_SESSION['role'] === 'admin', 'manager'): ?>
             <div class="card">
                 <h2>Reports</h2>
                 <p>View rental history and analytics.</p>
