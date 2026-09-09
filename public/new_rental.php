@@ -2,61 +2,73 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
-require_role(['admin', 'manager', 'employee']);
+require_role(['admin','manager','employee']);
 require_once __DIR__ . '/../includes/header.php';
 
 $message = "";
+$errors = [];
 
-// Fetch customers
-$customers = $pdo->query("SELECT * FROM customers ORDER BY last_name")->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch movies with stock > 0
-$movies = $pdo->query("SELECT * FROM movies WHERE stock_count > 0 ORDER BY title")->fetchAll(PDO::FETCH_ASSOC);
+$customers = $pdo->query("SELECT id, first_name, last_name FROM customers ORDER BY last_name")->fetchAll(PDO::FETCH_ASSOC);
+$movies = $pdo->query("SELECT id, title, stock FROM movies ORDER BY title")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $customer_id = $_POST['customer_id'] ?? "";
+    $movie_id = $_POST['movie_id'] ?? "";
 
-    $customer_id = $_POST['customer_id'];
-    $movie_id = $_POST['movie_id'];
+    if (empty($customer_id)) $errors[] = "Customer is required.";
+    if (empty($movie_id)) $errors[] = "Movie is required.";
 
-    // Create rental
-    $stmt = $pdo->prepare("
-        INSERT INTO rentals (customer_id, movie_id, rental_date, status)
-        VALUES (:customer, :movie, NOW(), 'out')
-    ");
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("SELECT stock FROM movies WHERE id = :id");
+        $stmt->execute([':id' => $movie_id]);
+        $stock = $stmt->fetchColumn();
 
-    $stmt->execute([
-        ':customer' => $customer_id,
-        ':movie'    => $movie_id
-    ]);
+        if ($stock <= 0) {
+            $errors[] = "This movie is out of stock.";
+        }
+    }
 
-    // Reduce movie stock
-    $pdo->prepare("UPDATE movies SET stock_count = stock_count - 1 WHERE id = :id")
-        ->execute([':id' => $movie_id]);
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO rentals (customer_id, movie_id, rental_date, status)
+            VALUES (:cid, :mid, CURDATE(), 'out')
+        ");
+        $stmt->execute([
+            ':cid' => $customer_id,
+            ':mid' => $movie_id
+        ]);
 
-    $message = "Rental created successfully!";
+        $pdo->prepare("UPDATE movies SET stock = stock - 1 WHERE id = :id")
+            ->execute([':id' => $movie_id]);
+
+        $message = "Rental created successfully!";
+    }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>New Rental</title>
-</head>
-<body>
 
-<h1>Create New Rental</h1>
+<h1>New Rental</h1>
+
+<?php if (!empty($errors)): ?>
+<div class="error-box">
+    <?php foreach ($errors as $e): ?>
+        <p><?= htmlspecialchars($e) ?></p>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
 
 <?php if ($message): ?>
-    <p style="color: green;"><?= $message ?></p>
+<div class="success-box">
+    <p><?= htmlspecialchars($message) ?></p>
+</div>
 <?php endif; ?>
 
 <form method="POST">
-
     <label>Customer:</label><br>
     <select name="customer_id" required>
-        <option value="">Select customer</option>
+        <option value="">Select Customer</option>
         <?php foreach ($customers as $c): ?>
             <option value="<?= $c['id'] ?>">
-                <?= $c['first_name'] . " " . $c['last_name'] ?>
+                <?= htmlspecialchars($c['first_name'] . " " . $c['last_name']) ?>
             </option>
         <?php endforeach; ?>
     </select>
@@ -64,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label>Movie:</label><br>
     <select name="movie_id" required>
-        <option value="">Select movie</option>
+        <option value="">Select Movie</option>
         <?php foreach ($movies as $m): ?>
             <option value="<?= $m['id'] ?>">
-                <?= $m['title'] ?> (Stock: <?= $m['stock_count'] ?>)
+                <?= htmlspecialchars($m['title']) ?> (Stock: <?= $m['stock'] ?>)
             </option>
         <?php endforeach; ?>
     </select>
@@ -78,8 +90,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <br>
 <a href="rentals.php">Back to Rentals</a>
-
-</body>
-</html>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

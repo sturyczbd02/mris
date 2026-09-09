@@ -62,3 +62,18 @@ footer {
 .card-btn:hover {
     background: #555;
 }
+
+/*Error box styles*/
+.error-box {
+    background: #ffdddd;
+    border-left: 4px solid #d00;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.success-box {
+    background: #ddffdd;
+    border-left: 4px solid #090;
+    padding: 10px;
+    margin-bottom: 15px;
+}

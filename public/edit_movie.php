@@ -5,85 +5,80 @@ require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin']);
 require_once __DIR__ . '/../includes/header.php';
 
-if (!isset($_GET['id'])) {
-    die("Movie ID missing.");
-}
-
+if (!isset($_GET['id'])) die("Movie ID missing.");
 $id = $_GET['id'];
-$message = "";
 
-// Fetch movie
 $stmt = $pdo->prepare("SELECT * FROM movies WHERE id = :id");
 $stmt->execute([':id' => $id]);
 $movie = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$movie) die("Movie not found.");
 
-if (!$movie) {
-    die("Movie not found.");
-}
+$message = "";
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = trim($_POST['title']);
+    $genre = trim($_POST['genre']);
+    $stock = trim($_POST['stock']);
 
-    $title = $_POST['title'];
-    $genre = $_POST['genre'];
-    $year = $_POST['release_year'];
-    $rating = $_POST['rating'];
-    $stock = $_POST['stock_count'];
+    // Validation
+    if (empty($title)) $errors[] = "Movie title is required.";
+    if (empty($genre)) $errors[] = "Genre is required.";
 
-    $update = $pdo->prepare("
-        UPDATE movies
-        SET title = :title, genre = :genre, release_year = :year,
-            rating = :rating, stock_count = :stock
-        WHERE id = :id
-    ");
+    if ($stock === "") {
+        $errors[] = "Stock is required.";
+    } elseif (!ctype_digit($stock) || $stock < 0) {
+        $errors[] = "Stock must be a non-negative number.";
+    }
 
-    $update->execute([
-        ':title' => $title,
-        ':genre' => $genre,
-        ':year'  => $year,
-        ':rating'=> $rating,
-        ':stock' => $stock,
-        ':id'    => $id
-    ]);
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("
+            UPDATE movies
+            SET title = :title, genre = :genre, stock = :stock
+            WHERE id = :id
+        ");
+        $stmt->execute([
+            ':title' => $title,
+            ':genre' => $genre,
+            ':stock' => $stock,
+            ':id' => $id
+        ]);
 
-    $message = "Movie updated successfully!";
+        $message = "Movie updated successfully!";
+    }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Movie</title>
-</head>
-<body>
 
 <h1>Edit Movie</h1>
 
+<?php if (!empty($errors)): ?>
+<div class="error-box">
+    <?php foreach ($errors as $e): ?>
+        <p><?= htmlspecialchars($e) ?></p>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
 <?php if ($message): ?>
-    <p style="color: green;"><?= $message ?></p>
+<div class="success-box">
+    <p><?= htmlspecialchars($message) ?></p>
+</div>
 <?php endif; ?>
 
 <form method="POST">
     <label>Title:</label><br>
-    <input type="text" name="title" value="<?= $movie['title'] ?>" required><br><br>
+    <input type="text" name="title" value="<?= htmlspecialchars($movie['title']) ?>" required><br><br>
 
     <label>Genre:</label><br>
-    <input type="text" name="genre" value="<?= $movie['genre'] ?>"><br><br>
+    <input type="text" name="genre" value="<?= htmlspecialchars($movie['genre']) ?>" required><br><br>
 
-    <label>Release Year:</label><br>
-    <input type="number" name="release_year" value="<?= $movie['release_year'] ?>"><br><br>
-
-    <label>Rating:</label><br>
-    <input type="text" name="rating" value="<?= $movie['rating'] ?>"><br><br>
-
-    <label>Stock Count:</label><br>
-    <input type="number" name="stock_count" value="<?= $movie['stock_count'] ?>"><br><br>
+    <label>Stock:</label><br>
+    <input type="number" name="stock" min="0" value="<?= htmlspecialchars($movie['stock']) ?>" required><br><br>
 
     <button type="submit">Save Changes</button>
 </form>
 
 <br>
 <a href="movies.php">Back to Movie List</a>
-
-</body>
-</html>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

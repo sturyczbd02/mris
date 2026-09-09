@@ -1,56 +1,55 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/header.php';
+
 session_start();
 
-$message = "";
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    // Fetch user
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :u LIMIT 1");
-    $stmt->execute([':u' => $username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (empty($username)) $errors[] = "Username is required.";
+    if (empty($password)) $errors[] = "Password is required.";
 
-    if ($user && password_verify($password, $user['password_hash'])) {
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :u");
+        $stmt->execute([':u' => $username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Set session
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
+        if ($user && password_verify($password, $user['password_hash'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
 
-        header("Location: dashboard.php");
-        exit;
-
-    } else {
-        $message = "Invalid username or password.";
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $errors[] = "Invalid username or password.";
+        }
     }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
 
-<h1>MRIS Login</h1>
+<h1>Login</h1>
 
-<?php if ($message): ?>
-    <p style="color: red;"><?= $message ?></p>
+<?php if (!empty($errors)): ?>
+<div class="error-box">
+    <?php foreach ($errors as $e): ?>
+        <p><?= htmlspecialchars($e) ?></p>
+    <?php endforeach; ?>
+</div>
 <?php endif; ?>
 
 <form method="POST">
     <label>Username:</label><br>
-    <input type="text" name="username" required><br><br>
+    <input type="text" name="username"><br><br>
 
     <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+    <input type="password" name="password"><br><br>
 
     <button type="submit">Login</button>
 </form>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

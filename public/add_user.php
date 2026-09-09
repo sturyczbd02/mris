@@ -1,25 +1,33 @@
 <?php
+require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin']);
 require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/db.php';
 
 $message = "";
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
     $role = $_POST['role'];
 
-    if ($username && $password && $role) {
+    if (empty($username)) $errors[] = "Username is required.";
+    if (empty($password)) $errors[] = "Password is required.";
+
+    $validRoles = ['admin','manager','employee'];
+    if (!in_array($role, $validRoles)) {
+        $errors[] = "Invalid role selected.";
+    }
+
+    if (empty($errors)) {
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $pdo->prepare("
             INSERT INTO users (username, password_hash, role)
             VALUES (:u, :p, :r)
         ");
-
         $stmt->execute([
             ':u' => $username,
             ':p' => $hash,
@@ -33,8 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <h1>Add User</h1>
 
+<?php if (!empty($errors)): ?>
+<div class="error-box">
+    <?php foreach ($errors as $e): ?>
+        <p><?= htmlspecialchars($e) ?></p>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
 <?php if ($message): ?>
-<p style="color: green;"><?= $message ?></p>
+<div class="success-box">
+    <p><?= htmlspecialchars($message) ?></p>
+</div>
 <?php endif; ?>
 
 <form method="POST">
@@ -54,5 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">Create User</button>
 </form>
+
+<br>
+<a href="users.php">Back to User List</a>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

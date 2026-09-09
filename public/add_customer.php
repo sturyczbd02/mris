@@ -6,40 +6,57 @@ require_role(['admin']);
 require_once __DIR__ . '/../includes/header.php';
 
 $message = "";
+$errors = [];
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $first = trim($_POST['first_name']);
+    $last = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
 
-    $first = $_POST['first_name'];
-    $last = $_POST['last_name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    // Validation
+    if (empty($first)) $errors[] = "First name is required.";
+    if (empty($last)) $errors[] = "Last name is required.";
+    if (empty($email)) {
+        $errors[] = "Email is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
+    if (!empty($phone) && !ctype_digit($phone)) {
+        $errors[] = "Phone number must contain only digits.";
+    }
 
-    // Insert into database
-    $stmt = $pdo->prepare("INSERT INTO customers (first_name, last_name, email, phone) 
-                           VALUES (:first, :last, :email, :phone)");
-
-    $stmt->execute([
-        ':first' => $first,
-        ':last'  => $last,
-        ':email' => $email,
-        ':phone' => $phone
-    ]);
-
-    $message = "Customer added successfully!";
+    // Insert only if no errors
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("
+            INSERT INTO customers (first_name, last_name, email, phone)
+            VALUES (:first, :last, :email, :phone)
+        ");
+        $stmt->execute([
+            ':first' => $first,
+            ':last' => $last,
+            ':email' => $email,
+            ':phone' => $phone
+        ]);
+        $message = "Customer added successfully!";
+    }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Customer</title>
-</head>
-<body>
 
 <h1>Add New Customer</h1>
 
+<?php if (!empty($errors)): ?>
+<div class="error-box">
+    <?php foreach ($errors as $e): ?>
+        <p><?= htmlspecialchars($e) ?></p>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
 <?php if ($message): ?>
-    <p style="color: green;"><?= $message ?></p>
+<div class="success-box">
+    <p><?= htmlspecialchars($message) ?></p>
+</div>
 <?php endif; ?>
 
 <form method="POST">
@@ -50,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="text" name="last_name" required><br><br>
 
     <label>Email:</label><br>
-    <input type="email" name="email"><br><br>
+    <input type="email" name="email" required><br><br>
 
     <label>Phone:</label><br>
     <input type="text" name="phone"><br><br>
@@ -60,8 +77,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <br>
 <a href="customers.php">Back to Customer List</a>
-
-</body>
-</html>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
