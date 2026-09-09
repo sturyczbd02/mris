@@ -19,6 +19,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <h1>Active Rentals</h1>
+<a href="/reports.php" class="back-btn">← Back to Reports</a>
 
 <table border="1" cellpadding="8">
     <tr>
