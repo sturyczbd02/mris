@@ -31,7 +31,7 @@ require_once __DIR__ . '/../includes/header.php';
 
             <div class="card">
                 <h2>Rentals</h2>
-                <p>Active: <?= $pdo->query("SELECT COUNT(*) FROM rentals WHERE status='out'")->fetchColumn() ?></p>
+                <p>Active: <?= $pdo->query("SELECT COUNT(*) FROM rentals WHERE COALESCE(r.status, 'out')")->fetchColumn() ?></p>
                 <p>Returned: <?= $pdo->query("SELECT COUNT(*) FROM rentals WHERE status='returned'")->fetchColumn() ?></p>
                 <a href="/rentals.php" class="card-btn">View Rentals</a>
                 <a href="/new_rental.php" class="card-btn">New Rental</a>
