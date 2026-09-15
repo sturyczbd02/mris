@@ -6,7 +6,7 @@ function require_role($roles) {
     }
 
     if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], $roles)) {
-        header("Location: .../public/dashboard.php");
+        header("Location: /mris/public/dashboard.php");
         exit;
     }
 }
