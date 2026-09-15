@@ -15,13 +15,13 @@ if (session_status() === PHP_SESSION_NONE) {
 <!-- Top Navigation Bar -->
 <nav class="top-nav">
     <div class="nav-left">
-        <a class="nav-brand" href="../public/dashboard.php">Brew City Rentals</a>
+        <a class="nav-brand" href="/mris/public/dashboard.php">Brew City Rentals</a>
     </div>
 
     <div class="nav-right">
         <?php if (isset($_SESSION['username'])): ?>
             <span class="nav-user">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></span>
-            <a href="../public/logout.php" class="nav-link">Logout</a>
+            <a href="/mris/public/logout.php" class="nav-link">Logout</a>
         <?php endif; ?>
     </div>
 </nav>
