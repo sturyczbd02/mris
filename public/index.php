@@ -12,7 +12,7 @@ require_once __DIR__ . '/../includes/header.php';
             Manage your movie catalog, customer accounts, rentals, and business reports — all in one modern, secure system.
         </p>
 
-        <a href="/login.php" class="landing-button">Login</a>
+        <a href="login.php" class="landing-button">Login</a>
     </div>
 
 </div>

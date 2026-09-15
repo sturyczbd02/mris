@@ -17,7 +17,7 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="card">
                 <h2>Customers</h2>
                 <p>Total: <?= $pdo->query("SELECT COUNT(*) FROM customers")->fetchColumn() ?></p>
-                <a href="/customers.php" class="card-btn">Manage Customers</a>
+                <a href="customers.php" class="card-btn">Manage Customers</a>
             </div>
             <?php endif; ?>
 
@@ -25,7 +25,7 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="card">
                 <h2>Movies</h2>
                 <p>Total: <?= $pdo->query("SELECT COUNT(*) FROM movies")->fetchColumn() ?></p>
-                <a href="/movies.php" class="card-btn">Manage Movies</a>
+                <a href="movies.php" class="card-btn">Manage Movies</a>
             </div>
             <?php endif; ?>
 
@@ -33,15 +33,15 @@ require_once __DIR__ . '/../includes/header.php';
                 <h2>Rentals</h2>
                 <p>Active: <?= $pdo->query("SELECT COUNT(*) FROM rentals WHERE COALESCE(status, 'out') = 'out'")->fetchColumn() ?></p>
                 <p>Returned: <?= $pdo->query("SELECT COUNT(*) FROM rentals WHERE status='returned'")->fetchColumn() ?></p>
-                <a href="/rentals.php" class="card-btn">View Rentals</a>
-                <a href="/new_rental.php" class="card-btn">New Rental</a>
+                <a href="rentals.php" class="card-btn">View Rentals</a>
+                <a href="new_rental.php" class="card-btn">New Rental</a>
             </div>
             
             <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'manager'): ?>
             <div class="card">
                 <h2>Reports</h2>
                 <p>View rental history and analytics.</p>
-                <a href="/reports.php" class="card-btn">Open Reports</a>
+                <a href="reports.php" class="card-btn">Open Reports</a>
             </div>
             <?php endif; ?>
             
@@ -49,7 +49,7 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="card">
                 <h2>User Accounts</h2>
                 <p>Manage system users and roles.</p>
-                <a href="/users.php" class="card-btn">Manage Users</a>
+                <a href="users.php" class="card-btn">Manage Users</a>
             </div>
             <?php endif; ?>
 

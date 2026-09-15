@@ -24,7 +24,7 @@ if (isset($_GET['customer_id'])) {
 ?>
 
 <h1>Customer Rental History</h1>
-<a href="/reports.php" class="back-btn">← Back to Reports</a>
+<a href="reports.php" class="back-btn">← Back to Reports</a>
 
 <form method="GET">
     <label>Select Customer:</label><br>

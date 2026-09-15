@@ -16,7 +16,7 @@ $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
 <h1>Movie Inventory</h1>
-<a href="/dashboard.php" class="back-btn">← Back to Dashboard</a>
+<a href="dashboard.php" class="back-btn">← Back to Dashboard</a>
 
 <br><br>
 
