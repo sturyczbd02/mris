@@ -1,19 +1,20 @@
 <?php
+// Ensure session is started BEFORE any output
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-?>
 
-<?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/permissions.php';
 require_role(['admin', 'manager']);
 require_once __DIR__ . '/../includes/header.php';
 
+// Validate movie ID
 if (!isset($_GET['id'])) die("Movie ID missing.");
 $id = $_GET['id'];
 
+// Fetch movie record
 $stmt = $pdo->prepare("SELECT * FROM movies WHERE id = :id");
 $stmt->execute([':id' => $id]);
 $movie = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,13 +24,21 @@ $message = "";
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $title = trim($_POST['title']);
     $genre = trim($_POST['genre']);
-    $stock = trim($_POST['stock']);
+    $year = trim($_POST['year']);
+    $stock = trim($_POST['stock_count']);
 
     // Validation
     if (empty($title)) $errors[] = "Movie title is required.";
     if (empty($genre)) $errors[] = "Genre is required.";
+
+    if ($year === "") {
+        $errors[] = "Year is required.";
+    } elseif (!ctype_digit($year) || $year < 1900 || $year > 2099) {
+        $errors[] = "Year must be a valid number between 1900 and 2099.";
+    }
 
     if ($stock === "") {
         $errors[] = "Stock is required.";
@@ -37,15 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Stock must be a non-negative number.";
     }
 
+    // Update only if no errors
     if (empty($errors)) {
         $stmt = $pdo->prepare("
             UPDATE movies
-            SET title = :title, genre = :genre, stock = :stock
+            SET title = :title,
+                genre = :genre,
+                year = :year,
+                stock_count = :stock
             WHERE id = :id
         ");
         $stmt->execute([
             ':title' => $title,
             ':genre' => $genre,
+            ':year' => $year,
             ':stock' => $stock,
             ':id' => $id
         ]);
@@ -72,14 +86,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+
     <label>Title:</label><br>
-    <input type="text" name="title" value="<?= htmlspecialchars($movie['title']) ?>" required><br><br>
+    <input type="text" name="title"
+           value="<?= htmlspecialchars($movie['title'] ?? '') ?>"
+           required><br><br>
 
     <label>Genre:</label><br>
-    <input type="text" name="genre" value="<?= htmlspecialchars($movie['genre']) ?>" required><br><br>
+    <input type="text" name="genre"
+           value="<?= htmlspecialchars($movie['genre'] ?? '') ?>"
+           required><br><br>
+
+    <label>Year:</label><br>
+    <input type="number" name="year" min="1900" max="2099"
+           value="<?= htmlspecialchars($movie['year'] ?? '') ?>"
+           required><br><br>
 
     <label>Stock:</label><br>
-    <input type="number" name="stock" min="0" value="<?= htmlspecialchars($movie['stock']) ?>" required><br><br>
+    <input type="number" name="stock_count" min="0"
+           value="<?= htmlspecialchars($movie['stock_count'] ?? '') ?>"
+           required><br><br>
 
     <button type="submit">Save Changes</button>
 </form>
